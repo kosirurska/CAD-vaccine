@@ -1,0 +1,238 @@
+---
+title: "Canada: Chronic conditions + vaccine uptake"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load the libraries
+library(tidyverse)
+library(readr)
+library(here)
+library(psych)
+library(english)
+library(stringr)
+library(tableone)
+library(kableExtra)
+library(patchwork)
+library(scales)
+library(ggridges)
+library(plotly)
+library(patchwork)
+library(haven)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+```
+
+```{r data, echo=FALSE, message=FALSE, warning=FALSE}
+# Read in the clean csv file
+leger <- read_csv("data/leger_for_analyses.csv")
+
+# subset for chronic people only
+leger_chronic <- leger %>%
+  filter(chronic_dummy == 1)
+```
+# INTRODUCTION
+
+Covid-19 vaccines have become wide-spread in the Western world beginning of 2021. To date, Canada's vaccine uptake is among leading in the world, with over 90% of eligible population vaccinated. 
+
+#### Aims:
+Using Canadian representative samples, we aimed 1) to explore attitudes about the COVID-19 vaccine booster doses among the Canadian adult population with and without physical chronic health conditions, and 2) to understand what are the motivations for vaccine uptake and factors associated with COVID-19 vaccine resistance among individuals with physical chronic health conditions. 
+
+# METHOD
+
+Data analysed for this study has been 
+Complete data
+
+Analyses were performed using R Studio (version). The analytical scripts are available online (add link).
+
+# RESULTS
+## Sample
+```{r echo=FALSE, warning=FALSE}
+## Create a table
+# First create a variable list you want in the table
+var_list <- c("age_yrs", "sex", "edu", "hoinc", "ethnicity", "chronic_descriptive")
+
+# Determine which variables are categorical
+cat_vars <- c("sex", "edu", "hoinc", "ethnicity", "chronic_descriptive")
+
+#All cases table
+table_1 <- CreateTableOne(vars = var_list,
+                          factorVars = cat_vars,
+                          data = leger, 
+                          strata = c("chronic_dummy"))
+table_1
+```
+
+## Vaccine uptake and booster doses
+Vaccine uptake across Canada was positive, which is reflected in our sample. When broken down by the health status, we found that only 9.8% of people with physical chronic health conditions reported being non-vaccinated, compared to 14.3% of healthy individuals.
+
+```{r echo=FALSE, warning=FALSE}
+leger %>%
+  select(chronic_dummy, vaccine) %>%
+  group_by(chronic_dummy, vaccine) %>%
+  drop_na() %>%
+  count() %>%
+  group_by(chronic_dummy) %>%
+  mutate(sum_group_status = sum(n),
+         prop = n / sum_group_status * 100,
+         prop = round(prop, 2)) %>%
+  select(-sum_group_status) %>%
+  kable(col.names = c("Chronic illness", "Vaccine status", "N", "Proportion")) %>%
+  kable_styling(full_width = FALSE)
+```
+
+In the latest survey round, those who received at least a single dose of vaccine were also asked about their attitudes toward vaccine boosters (3rd doses). Canadian with chronic health conditions demonstrate positive attitudes toward COVID-19 vaccine boosters, only 5% reported being somewhat or extremely unlikely to take the booster dose, compared to 10% of health individuals.
+```{r echo=FALSE, warning=FALSE}
+leger %>%
+  select(chronic_dummy, booster_dummy) %>%
+  group_by(chronic_dummy, booster_dummy) %>%
+  drop_na() %>%
+  count() %>%
+  group_by(chronic_dummy) %>%
+  mutate(sum_group_status = sum(n),
+         prop = n / sum_group_status * 100,
+         prop = round(prop, 2)) %>%
+  select(-sum_group_status) %>%
+  kable(col.names = c("Chronic illness", "Vaccine status", "N", "Proportion")) %>%
+  kable_styling(full_width = FALSE)
+```
+
+## Vaccine motivations among Canadian with physical chronic health conditions
+
+Among individuals with physical chrnoic health conditions we explored 
+
+```{r echo=FALSE, warning=FALSE, fig.width=12, fig.height=14}
+vaxed <- leger_chronic %>%
+  filter(vaccine_dummy == 1) %>%
+  mutate_at(vars(c(inf1:inf16)), 
+            funs(case_when(. == 1 ~ 1,
+                           . == 2 | . == 3 | . == 4 ~ 0))) %>%
+  pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
+  group_by(influence, value) %>%
+  count(influence) %>%
+  drop_na() %>%
+  ungroup(influence, value) %>%
+  filter(value == 1) %>%
+  select(-value) %>%
+  mutate(influence = as.factor(influence),
+         influence = fct_reorder(influence, n)) %>%
+  ggplot(aes(x = n, y = influence, fill = influence)) + 
+  geom_col() + 
+  geom_text(aes(label = paste0(round((n/2173*100),1),"%"), x = n - 70)) +
+  labs(title = "Motivations among vaccinated individuals (N = 2,173)", 
+       x = "Number of people responding 'To a great extent'",
+       y = " ") + 
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none",
+        strip.text = element_text(face = 'bold'),
+        panel.grid.major.x = element_line()) +
+  scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
+                              "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
+                   labels = c("Trust in vaccine company",
+                              "Info of no side effects",
+                              "Info about effectiveness",
+                              "Personal high risk",
+                              "Other's positive att.",
+                              "Others getting vaccine",
+                              "Doctor recommendation",
+                              "Convenience of getting vaccine",
+                              "Protect others",
+                              "Attending events",
+                              "Doing my part",
+                              "Employer recommendation",
+                              "Only need 1 dose",
+                              "Reduce my worries",
+                              "Effective for variants",
+                              "Vaccine of choice")) +
+  scale_fill_viridis_d(alpha = 0.9,
+                       begin = 0.3, end = 1)
+
+
+unvaxed <- leger_chronic %>%
+  filter(vaccine_dummy == 0) %>%
+  mutate_at(vars(c(inf1:inf16)), 
+            funs(case_when(. == 1 ~ 1,
+                           . == 2 | . == 3 | . == 4 ~ 0))) %>%
+  pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
+  group_by(influence, value) %>%
+  count(influence) %>%
+  drop_na() %>%
+  ungroup(influence, value) %>%
+  filter(value == 1) %>%
+  select(-value) %>%
+  mutate(influence = as.factor(influence),
+         influence = fct_reorder(influence, n)) %>%
+  ggplot(aes(x = n, y = influence, fill = influence)) + 
+  geom_col() + 
+  geom_text(aes(label = paste0(round((n/236*100),1),"%"), x = n - 5)) +
+  labs(title = "Motivations among unvaccinated individuals (N = 236)", 
+       x = "Number of people responding 'To a great extent'",
+       y = " ") + 
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none",
+        strip.text = element_text(face = 'bold'),
+        panel.grid.major.x = element_line()) +
+  scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
+                              "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
+                   labels = c("Trust in vaccine company",
+                              "Info of no side effects",
+                              "Info about effectiveness",
+                              "Personal high risk",
+                              "Other's positive att.",
+                              "Others getting vaccine",
+                              "Doctor recommendation",
+                              "Convenience of getting vaccine",
+                              "Protect others",
+                              "Attending events",
+                              "Doing my part",
+                              "Employer recommendation",
+                              "Only need 1 dose",
+                              "Reduce my worries",
+                              "Effective for variants",
+                              "Vaccine of choice")) +
+  scale_fill_viridis_d(alpha = 0.9,
+                       begin = 0.3, end = 1)
+
+(vaxed/unvaxed) + plot_annotation(tag_levels = 'A')
+```
+
+
+```{r echo=FALSE, warning=FALSE}
+set.seed(1)
+
+logit_model_data <- leger_chronic %>%
+  select(vaccine_dummy, age_yrs, sex, hoinc, edu, prov, wave, any_m_health, chronic_multi, distress_rev, pond) %>%
+  filter(sex %in% c("male", "female")) %>%
+  mutate(income = as.numeric(case_when(hoinc == "bottom 3rd" ~ 0,
+                                       hoinc == "middle 3rd" ~ 1,
+                                       hoinc == "top 3rd" ~ 2)),
+         education = as.numeric(case_when(edu == "never been" ~ 0, 
+                                          edu == "primary" ~ 1,
+                                          edu == "secondary" ~ 2,
+                                          edu == "college" ~ 3,
+                                          edu == "graduate" ~ 4)))
+
+
+logit_c1 <- glm(vaccine_dummy ~ age_yrs + sex + education + income + any_m_health + chronic_multi + distress_rev,
+                family = "binomial",
+                data = logit_model_data,
+                weights = pond)
+
+tab_model(logit_c1)
+```
+
+# DISCUSSION
+The findings of this report demonstrate that despite the widespread uptake of the vaccines in Canada, there remains a small subset
+Results suggests that 
+Despite the high vaccine uptake among Canadian adults the attitudes toward vaccine boosters seem more negative than those with chronic health conditions.
+Among the resistant individuals with physical chronic health conditions the 3 mostly endorsed reasons that would motivate people to receive their vaccines are receiving more information about the side effects, information about effectiveness, and trusting the pharmacological companies.
+
+Making sure that individuals with chrocic health conditions are vaccinated is particularly importnat as they are at a higher risk for developing 
+
+These insights provide important informaiton on how healthcare professionals, policymakers as well as all the relevant stakeholders may need to structure their vaccine messageing in order to encourage the vaccine uptake among the most vulnerable and at risk popluation.
+
+The results suggest that vaccine uptake among Canadians with chronic health conditions was lowest among xya, findings in line with the existing literature on vaccine hestinancy. 
+
+These data were collected when vaccines were already widely available and accessible to all Canadians.
