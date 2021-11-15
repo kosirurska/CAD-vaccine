@@ -1,0 +1,17 @@
+---
+title: "SUPPLEMENTARY MATERIAL"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## SUPPLEMENTARY MATERIAL
+
+NOTES to be included online supplementary
+
+Positive responses to “Don’t know/Prefer not to answer” were treated as missing data.
+
+Exact phrasing of the vaccine motivations
+

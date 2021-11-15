@@ -52,6 +52,8 @@ The present study is part of a larger International COVID‐19 Awareness and Res
 ### Sample
 
 NB - this automatic demographic table does not contain weights therefore the differences between the groups (t-test and chi2) will be recalculated.
+
+WILL MAKE IT PRETTY FOR PUB.
 ```{r echo=FALSE, warning=FALSE}
 ## Create a table
 table_data <- leger %>%
