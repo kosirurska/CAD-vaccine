@@ -4,6 +4,7 @@
 
 library(tidyverse)
 library(haven)
+library(dplyr)
 
 # Read in the raw data
 leger_raw <- read_sas("data/leger1_7.sas7bdat") %>%
@@ -15,7 +16,8 @@ leger_raw <- rowid_to_column(leger_raw)
 # Subset the data needed for the analyses
 leger_for_analysis <- leger_raw %>%
   filter(wave %in% c(6:7)) %>%
-  select(rowid, prov, sex, age_yrs, recimp, medins, edu, ethn, hoinc, reven, area, # demographic factors
+  select(rowid, date_part,
+         prov, sex, age_yrs, recimp, medins, edu, ethn, hoinc, reven, area, # demographic factors
          emplstat_sq001:emplstat_sq008,
          concern_sq001:concern_sq005, 
          concern_sq008, concern_sq016, concern_sq017, concern_sq019, concern_sq020, # concerns
@@ -25,9 +27,9 @@ leger_for_analysis <- leger_raw %>%
          cvdvacci, cvdvacc_v2, contrpos, vacboos, #vaccination questions
          contains("inflvac"), contains("inflvade")) %>%
   rowwise() %>%
-  mutate_at(vars(hecond_sq001:hecond_sq011), ~ifelse(. == 2, 0, .)) %>%# recode into dummy with 1 and 0 for chronic conditions, easier for counting
-  mutate(ethnicity = case_when(ethn == 1 ~ 1, # recode ethnicity for fewer categories
-                               ethn == 3 ~ 2,
+  mutate_at(vars(hecond_sq001:hecond_sq011), ~ifelse(. == 2, 0, .)) %>% # recode into dummy with 1 and 0 for chronic conditions, easier for counting
+  dplyr::mutate(ethnicity = case_when(ethn == 1 ~ 1, # recode ethnicity for fewer categories
+                               ethn == 3 ~ 2, ## LATER realized there is no data on ethnicity
                                ethn == 4 ~ 3,
                                ethn == 6 ~ 4,
                                ethn == 7 ~ 5,
@@ -42,15 +44,17 @@ leger_for_analysis <- leger_raw %>%
                                 emplstat_sq007 == 1 ~ 7,
                                 emplstat_sq008 == 1 ~ 8),
          hecond_immune = coalesce(hecond_sq010, hecond_sq011),
-         chronic = sum(c(hecond_sq001, hecond_sq002, hecond_sq004, hecond_sq005, hecond_sq007, hecond_immune), na.rm = T),
+         chronic = sum(c(hecond_sq001, hecond_sq002, hecond_sq003, hecond_sq004, hecond_sq005, hecond_sq006, hecond_sq007, hecond_immune), na.rm = T),
          chronic_dummy = case_when(chronic == 0 ~ 0,
                                    chronic >= 1 ~ 1),
          chronic_multi = case_when(chronic == 0 | chronic == 1  ~ 0, # dummy variables for multiple chronic conditions (2 or more)
                                    chronic > 1 ~ 1),
          chronic_descriptive = case_when(hecond_sq001 == 1 ~ "heart",
                                          hecond_sq002 == 1 ~ "lung",
+                                         hecond_sq003 == 1 ~ "cancer",
                                          hecond_sq004 == 1 ~ "hypertension",
                                          hecond_sq005 == 1 ~ "diabetes",
+                                         hecond_sq006 == 1 ~ "obesity",
                                          hecond_sq007 == 1 ~ "autoimmune",
                                          hecond_immune == 1 ~ "other"),
          distress = sum(c(impacvd_sq001, impacvd_sq002, impacvd_sq003), na.rm = FALSE),
@@ -62,7 +66,7 @@ leger_for_analysis <- leger_raw %>%
                                       depression == 1 & anxiety == 1 ~ 1),
          any_m_health = ifelse(depression == 1 | anxiety == 1, 1, 0)) %>%
   tidyr::replace_na(list(anxiety = 0, depression = 0, comorbid_dep_anx = 0, any_m_health = 0)) %>%
-  mutate(vaccine = factor(cvdvacci, 
+  dplyr::mutate(vaccine = factor(cvdvacci, 
                           levels = c(1:5), # relabel the vaccine status variable
                           labels = c("No",
                                      "Yes (partially)",
@@ -104,11 +108,19 @@ leger_for_analysis <- leger_raw %>%
          hoinc = factor(hoinc, 
                         levels = c(1:4),
                         labels = c("bottom 3rd", "middle 3rd", "top 3rd", "prefer not to answer")),
+         province_full = factor(prov, 
+                                levels = c(1:10), 
+                                labels = c("British Columbia", "Alberta", "Saskatchewan", 
+                                           "Manitoba", "Ontario", "Quebec", "New Brunswick", 
+                                           "Nova Scotia", "Prince Edward Island", "Newfoundland")),
+         province = as.factor(case_when(prov <= 4 ~ "West",
+                                        prov == 5 | prov == 6 ~ "Central",
+                                        prov > 6 ~ "East")),
          edu = factor(edu, 
                       levels = c(1:6),
                       labels = c("primary", "secondary", "college", "graduate", "never been" ,"prefer not to answer"))) %>%
-  mutate(distress_rev = 13-distress) %>%
-  mutate(distress_rev = distress_rev + 2)
+  dplyr::mutate(distress_rev = 13-distress) %>%
+  dplyr::mutate(distress_rev = distress_rev + 2)
 
 # Save the new data file for the analyses
 

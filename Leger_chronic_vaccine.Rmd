@@ -1,5 +1,5 @@
 ---
-title: "Canada: Chronic conditions + vaccine uptake"
+title: "Canada: COVID-19 vaccine and booster attitudes and motivations in adults with physical chronic health conditions"
 output: html_document
 ---
 
@@ -33,40 +33,47 @@ leger <- read_csv("data/leger_for_analyses.csv")
 leger_chronic <- leger %>%
   filter(chronic_dummy == 1)
 ```
-# INTRODUCTION
+## INTRODUCTION
 
-Covid-19 vaccines have become wide-spread in the Western world beginning of 2021. To date, Canada's vaccine uptake is among leading in the world, with over 90% of eligible population vaccinated. 
+Covid-19 vaccines have become wide-spread in the Western world beginning of 2021. To date, Canada's vaccine uptake is among leading in the world, with over 75% of eligible population vaccinated.
 
 #### Aims:
-Using Canadian representative samples, we aimed 1) to explore attitudes about the COVID-19 vaccine booster doses among the Canadian adult population with and without physical chronic health conditions, and 2) to understand what are the motivations for vaccine uptake and factors associated with COVID-19 vaccine resistance among individuals with physical chronic health conditions. 
+Using Canadian representative samples, we aimed 
 
-# METHOD
+1) to explore attitudes about the COVID-19 vaccine booster doses among the Canadian adult population with and without physical chronic health conditions, and 
 
-Data analysed for this study has been 
-Complete data
+2) to understand what are the motivations for vaccine uptake and factors associated with COVID-19 vaccine resistance among individuals with physical chronic health conditions. 
 
-Analyses were performed using R Studio (version). The analytical scripts are available online (add link).
+## METHOD
 
-# RESULTS
-## Sample
+The present study is part of a larger International COVID‐19 Awareness and Responses Evaluation (iCARE) study, which is a global multi‐phase research survey conducted through the Montreal Behavioural Medicine Centre. Find more about the study and materials at [www.iCAREstudy.com](www.iCAREstudy.com). 
+
+## RESULTS
+### Sample
+
+NB - this automatic demographic table does not contain weights therefore the differences between the groups (t-test and chi2) will be recalculated.
 ```{r echo=FALSE, warning=FALSE}
 ## Create a table
+table_data <- leger %>%
+  select(age_yrs, sex, edu, hoinc, ethnicity, province_full, chronic_descriptive, chronic_dummy, chronic_multi, any_m_health)
+
 # First create a variable list you want in the table
-var_list <- c("age_yrs", "sex", "edu", "hoinc", "ethnicity", "chronic_descriptive")
+var_list <- c("age_yrs", "sex", "edu", "hoinc", "province_full", "chronic_descriptive", "chronic_multi")
 
 # Determine which variables are categorical
-cat_vars <- c("sex", "edu", "hoinc", "ethnicity", "chronic_descriptive")
+cat_vars <- c("sex", "edu", "hoinc", "province_full", "chronic_descriptive", "chronic_multi")
 
 #All cases table
 table_1 <- CreateTableOne(vars = var_list,
                           factorVars = cat_vars,
-                          data = leger, 
+                          data = table_data, 
                           strata = c("chronic_dummy"))
+
 table_1
 ```
 
-## Vaccine uptake and booster doses
-Vaccine uptake across Canada was positive, which is reflected in our sample. When broken down by the health status, we found that only 9.8% of people with physical chronic health conditions reported being non-vaccinated, compared to 14.3% of healthy individuals.
+### Vaccine uptake and booster doses
+When broken down by the health status, we found that only 9.8% of people with physical chronic health conditions reported being non-vaccinated, compared to 14.3% of healthy individuals.
 
 ```{r echo=FALSE, warning=FALSE}
 leger %>%
@@ -83,7 +90,7 @@ leger %>%
   kable_styling(full_width = FALSE)
 ```
 
-In the latest survey round, those who received at least a single dose of vaccine were also asked about their attitudes toward vaccine boosters (3rd doses). Canadian with chronic health conditions demonstrate positive attitudes toward COVID-19 vaccine boosters, only 5% reported being somewhat or extremely unlikely to take the booster dose, compared to 10% of health individuals.
+Canadian with chronic health conditions demonstrate positive attitudes toward COVID-19 vaccine boosters, only 5% reported being somewhat or extremely unlikely to take the booster dose, compared to 10% of health individuals.
 ```{r echo=FALSE, warning=FALSE}
 leger %>%
   select(chronic_dummy, booster_dummy) %>%
@@ -99,9 +106,7 @@ leger %>%
   kable_styling(full_width = FALSE)
 ```
 
-## Vaccine motivations among Canadian with physical chronic health conditions
-
-Among individuals with physical chrnoic health conditions we explored 
+### Vaccine motivations among Canadian with physical chronic health conditions
 
 ```{r echo=FALSE, warning=FALSE, fig.width=12, fig.height=14}
 vaxed <- leger_chronic %>%
@@ -120,8 +125,8 @@ vaxed <- leger_chronic %>%
          influence = fct_reorder(influence, n)) %>%
   ggplot(aes(x = n, y = influence, fill = influence)) + 
   geom_col() + 
-  geom_text(aes(label = paste0(round((n/2173*100),1),"%"), x = n - 70)) +
-  labs(title = "Motivations among vaccinated individuals (N = 2,173)", 
+  geom_text(aes(label = paste0(round((n/2294*100),1),"%"), x = n - 70)) +
+  labs(title = "Motivations among vaccinated individuals (N = 2,294)", 
        x = "Number of people responding 'To a great extent'",
        y = " ") + 
   theme_classic(base_size = 16) +
@@ -166,8 +171,8 @@ unvaxed <- leger_chronic %>%
          influence = fct_reorder(influence, n)) %>%
   ggplot(aes(x = n, y = influence, fill = influence)) + 
   geom_col() + 
-  geom_text(aes(label = paste0(round((n/236*100),1),"%"), x = n - 5)) +
-  labs(title = "Motivations among unvaccinated individuals (N = 236)", 
+  geom_text(aes(label = paste0(round((n/251*100),1),"%"), x = n - 5)) +
+  labs(title = "Motivations among unvaccinated individuals (N = 251)", 
        x = "Number of people responding 'To a great extent'",
        y = " ") + 
   theme_classic(base_size = 16) +
@@ -198,41 +203,46 @@ unvaxed <- leger_chronic %>%
 (vaxed/unvaxed) + plot_annotation(tag_levels = 'A')
 ```
 
+### Logistic regression output
+
+*NOTE* - Education is treated as continuous variable with the following levels: "never been" ~ 0, "primary" ~ 1,"secondary" ~ 2, "college" ~ 3, "graduate" ~ 4.
+
+Province is broken down into 3 geographical regions: 
+
+* *East* = "New Brunswick", "Nova Scotia", "Prince Edward Island", "Newfoundland"
+* *Central* = "Ontario", "Quebec"
+* *West* = "British Columbia", "Alberta", "Saskatchewan", "Manitoba"
+
+Distress rev = compound score of COVID-19 related feelings of anxiety, depression, and loneliness. Scale rangess from 0 - 9, with higher scores indicating higher levels of pandemic-related distress.
 
 ```{r echo=FALSE, warning=FALSE}
 set.seed(1)
 
 logit_model_data <- leger_chronic %>%
-  select(vaccine_dummy, age_yrs, sex, hoinc, edu, prov, wave, any_m_health, chronic_multi, distress_rev, pond) %>%
+  select(vaccine_dummy, age_yrs, sex, hoinc, edu, province, wave, any_m_health, chronic_multi, distress_rev, pond) %>%
   filter(sex %in% c("male", "female")) %>%
-  mutate(income = as.numeric(case_when(hoinc == "bottom 3rd" ~ 0,
-                                       hoinc == "middle 3rd" ~ 1,
-                                       hoinc == "top 3rd" ~ 2)),
-         education = as.numeric(case_when(edu == "never been" ~ 0, 
+  mutate(education = as.numeric(case_when(edu == "never been" ~ 0, 
                                           edu == "primary" ~ 1,
                                           edu == "secondary" ~ 2,
                                           edu == "college" ~ 3,
                                           edu == "graduate" ~ 4)))
 
 
-logit_c1 <- glm(vaccine_dummy ~ age_yrs + sex + education + income + any_m_health + chronic_multi + distress_rev,
+# In case income should be treated as numeric
+# income = as.numeric(case_when(hoinc == "bottom 3rd" ~ 0,
+#                                        hoinc == "middle 3rd" ~ 1,
+#                                        hoinc == "top 3rd" ~ 2)),
+
+logit_c1 <- glm(vaccine_dummy ~ age_yrs + sex + province + education + hoinc + any_m_health + chronic_multi + distress_rev,
                 family = "binomial",
                 data = logit_model_data,
                 weights = pond)
 
 tab_model(logit_c1)
+
 ```
 
-# DISCUSSION
-The findings of this report demonstrate that despite the widespread uptake of the vaccines in Canada, there remains a small subset
-Results suggests that 
-Despite the high vaccine uptake among Canadian adults the attitudes toward vaccine boosters seem more negative than those with chronic health conditions.
-Among the resistant individuals with physical chronic health conditions the 3 mostly endorsed reasons that would motivate people to receive their vaccines are receiving more information about the side effects, information about effectiveness, and trusting the pharmacological companies.
+## DISCUSSION
 
-Making sure that individuals with chrocic health conditions are vaccinated is particularly importnat as they are at a higher risk for developing 
+These insights provide important information on how healthcare professionals, policymakers as well as all the relevant stakeholders may need to structure their vaccine messaging in order to encourage the vaccine uptake among the most vulnerable and at risk populations.
 
-These insights provide important informaiton on how healthcare professionals, policymakers as well as all the relevant stakeholders may need to structure their vaccine messageing in order to encourage the vaccine uptake among the most vulnerable and at risk popluation.
-
-The results suggest that vaccine uptake among Canadians with chronic health conditions was lowest among xya, findings in line with the existing literature on vaccine hestinancy. 
-
-These data were collected when vaccines were already widely available and accessible to all Canadians.
