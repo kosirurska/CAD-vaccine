@@ -14,7 +14,6 @@ library(english)
 library(stringr)
 library(tableone)
 library(kableExtra)
-library(patchwork)
 library(scales)
 library(ggridges)
 library(plotly)
@@ -53,7 +52,7 @@ The present study is part of a larger International COVID‐19 Awareness and Res
 
 NB - this automatic demographic table does not contain weights therefore the differences between the groups (t-test and chi2) will be recalculated.
 
-WILL MAKE IT PRETTY FOR PUB.
+More complete table is available in the separate file on the same repository.
 ```{r echo=FALSE, warning=FALSE}
 ## Create a table
 table_data <- leger %>%
@@ -222,12 +221,12 @@ set.seed(1)
 
 logit_model_data <- leger_chronic %>%
   select(vaccine_dummy, age_yrs, sex, hoinc, edu, province, wave, any_m_health, chronic_multi, distress_rev, pond) %>%
-  filter(sex %in% c("male", "female")) %>%
-  mutate(education = as.numeric(case_when(edu == "never been" ~ 0, 
-                                          edu == "primary" ~ 1,
-                                          edu == "secondary" ~ 2,
-                                          edu == "college" ~ 3,
-                                          edu == "graduate" ~ 4)))
+  filter(sex %in% c("Male", "Female")) %>%
+  mutate(education = as.numeric(case_when(edu == "Never been" ~ 0, 
+                                          edu == "Primary" ~ 1,
+                                          edu == "Secondary" ~ 2,
+                                          edu == "College" ~ 3,
+                                          edu == "Graduate" ~ 4)))
 
 
 # In case income should be treated as numeric

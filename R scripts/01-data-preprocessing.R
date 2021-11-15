@@ -49,14 +49,14 @@ leger_for_analysis <- leger_raw %>%
                                    chronic >= 1 ~ 1),
          chronic_multi = case_when(chronic == 0 | chronic == 1  ~ 0, # dummy variables for multiple chronic conditions (2 or more)
                                    chronic > 1 ~ 1),
-         chronic_descriptive = case_when(hecond_sq001 == 1 ~ "heart",
-                                         hecond_sq002 == 1 ~ "lung",
-                                         hecond_sq003 == 1 ~ "cancer",
-                                         hecond_sq004 == 1 ~ "hypertension",
-                                         hecond_sq005 == 1 ~ "diabetes",
-                                         hecond_sq006 == 1 ~ "obesity",
-                                         hecond_sq007 == 1 ~ "autoimmune",
-                                         hecond_immune == 1 ~ "other"),
+         chronic_descriptive = case_when(hecond_sq001 == 1 ~ "Heart disease",
+                                         hecond_sq002 == 1 ~ "Lung disease",
+                                         hecond_sq003 == 1 ~ "Cancer",
+                                         hecond_sq004 == 1 ~ "Hypertension",
+                                         hecond_sq005 == 1 ~ "Diabetes",
+                                         hecond_sq006 == 1 ~ "Obesity",
+                                         hecond_sq007 == 1 ~ "Autoimmune",
+                                         hecond_immune == 1 ~ "Other"),
          distress = sum(c(impacvd_sq001, impacvd_sq002, impacvd_sq003), na.rm = FALSE),
          depression = case_when(hecond_sq008 == 2 ~ 0,
                                 hecond_sq008 == 1 ~ 1),
@@ -102,12 +102,12 @@ leger_for_analysis <- leger_raw %>%
          booster_dummy = case_when(vacboos == 1 | vacboos == 2 ~ "Likely",
                                    vacboos == 3 |vacboos == 4 | vacboos == 5 ~ "Unlikely"),
          sex = factor(sex, levels = c(1:4),
-                      labels = c("male", "female", "other", "prefer not to answer")),
+                      labels = c("Male", "Female", "Other", "Prefer not to answer")),
          area = factor(area, levels = c(1:4),
-                       labels = c("rural", "suburban", "urban", "prefer not to answer")),
+                       labels = c("Rural", "Suburban", "Urban", "Prefer not to answer")),
          hoinc = factor(hoinc, 
                         levels = c(1:4),
-                        labels = c("bottom 3rd", "middle 3rd", "top 3rd", "prefer not to answer")),
+                        labels = c("Bottom 3rd", "Middle 3rd", "Top 3rd", "Prefer not to answer")),
          province_full = factor(prov, 
                                 levels = c(1:10), 
                                 labels = c("British Columbia", "Alberta", "Saskatchewan", 
@@ -118,12 +118,16 @@ leger_for_analysis <- leger_raw %>%
                                         prov > 6 ~ "East")),
          edu = factor(edu, 
                       levels = c(1:6),
-                      labels = c("primary", "secondary", "college", "graduate", "never been" ,"prefer not to answer"))) %>%
+                      labels = c("Primary", "Secondary", "College", "Graduate", "Never been" ,"Prefer not to answer"))) %>%
   dplyr::mutate(distress_rev = 13-distress) %>%
   dplyr::mutate(distress_rev = distress_rev + 2)
+
+# ADDED - replace incorrect values for age with NA for more accurate analyses, 3 cases are erroneous
+leger_for_analysis[leger_for_analysis==559] <- NA 
+leger_for_analysis[leger_for_analysis==333] <- NA 
+leger_for_analysis[leger_for_analysis==205] <- NA 
 
 # Save the new data file for the analyses
 
 write_csv(leger_for_analysis, "data/leger_for_analyses.csv")
   
-

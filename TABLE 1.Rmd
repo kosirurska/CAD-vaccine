@@ -1,0 +1,82 @@
+---
+title: "TABLE: COVID-19 vaccine and booster attitudes and motivations in adults with physical chronic health conditions"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+# Load the libraries
+library(tidyverse)
+library(readr)
+library(here)
+library(kableExtra)
+library(scales)
+library(haven)
+library(sjPlot)
+library(sjmisc)
+library(sjlabelled)
+library(table1)
+library(sjstats)
+```
+
+```{r data, echo=FALSE, message=FALSE, warning=FALSE}
+# Read in the clean csv file
+
+# https://cran.r-project.org/web/packages/table1/vignettes/table1-examples.html
+leger <- read_csv("data/leger_for_analyses.csv")
+
+table_data <- leger %>%
+  select(age_yrs, sex, edu, hoinc, province_full, chronic_descriptive, chronic_dummy, chronic_multi, any_m_health, vaccine, booster_dummy, pond) %>%
+  mutate(chronic_dummy = factor(chronic_dummy,
+                                levels = c(0:1),
+                                labels = c("Healthy", "Chronic Health Condition")),
+         chronic_multi = factor(chronic_multi, 
+                                levels = c(0:1),
+                                labels = c("No", "Yes")),
+         any_m_health = factor(any_m_health,
+                               levels = c(0:1),
+                               labels = c("No", "Yes")))
+
+label(table_data$sex) <- "Sex"
+label(table_data$age_yrs) <- "Age"
+label(table_data$edu) <- "Education"
+label(table_data$province_full) <- "Province"
+label(table_data$hoinc) <- "Income"
+label(table_data$chronic_descriptive) <- "Chronic illness"
+label(table_data$chronic_multi) <- "Multimorbidity"
+label(table_data$any_m_health) <- "Diagnosis of mental health disorder"
+label(table_data$vaccine) <- "Received COVID-19 vaccine?"
+label(table_data$booster_dummy) <- "Likelihood of taking COVID-19 booster dose?"
+
+units(table_data$age_yrs) <- "years"
+
+table1(~ age_yrs + sex + edu + hoinc + province_full + chronic_descriptive + chronic_multi + any_m_health + vaccine + booster_dummy | chronic_dummy,
+       data = table_data)
+```
+
+### Calculations for the comparison of the groups using survey weights
+```{r}
+weighted_ttest(table_data, 
+               x = age_yrs,
+               grp = chronic_dummy,
+               weights = pond,
+               mu = 0,
+               paired = FALSE,
+               ci.lvl = 0.95,
+               alternative = c("two.sided"))
+
+weighted_chisqtest(table_data, 
+                   x = edu,
+                   y = chronic_dummy,
+                   weights = pond)
+
+
+
+```
+
+
+
+
+
+
+
