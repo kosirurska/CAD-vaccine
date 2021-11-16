@@ -26,8 +26,10 @@ leger_for_analysis <- leger_raw %>%
          phyhe, menthe, wave, pond,
          cvdvacci, cvdvacc_v2, contrpos, vacboos, #vaccination questions
          contains("inflvac"), contains("inflvade")) %>%
+  mutate_at(vars(hecond_sq001, hecond_sq002, hecond_sq003, hecond_sq004,
+                 hecond_sq005, hecond_sq006, hecond_sq007, hecond_sq008, 
+                 hecond_sq009, hecond_sq010, hecond_sq011), ~ifelse(. == 2, 0, .)) %>% # recode into dummy with 1 and 0 for chronic conditions, easier for counting
   rowwise() %>%
-  mutate_at(vars(hecond_sq001:hecond_sq011), ~ifelse(. == 2, 0, .)) %>% # recode into dummy with 1 and 0 for chronic conditions, easier for counting
   dplyr::mutate(ethnicity = case_when(ethn == 1 ~ 1, # recode ethnicity for fewer categories
                                ethn == 3 ~ 2, ## LATER realized there is no data on ethnicity
                                ethn == 4 ~ 3,

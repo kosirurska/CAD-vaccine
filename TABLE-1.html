@@ -524,6 +524,35 @@ pre code {
 </tbody>
 </table>
 </div>
+<div id="calculations-for-the-comparison-of-the-groups-using-survey-weights" class="section level3">
+<h3>Calculations for the comparison of the groups using survey weights</h3>
+<pre class="r"><code>weighted_ttest(table_data, 
+               x = age_yrs,
+               grp = chronic_dummy,
+               weights = pond,
+               mu = 0,
+               paired = FALSE,
+               ci.lvl = 0.95,
+               alternative = c(&quot;two.sided&quot;))</code></pre>
+<pre><code>## 
+## One Sample t-test (two.sided)
+## # t=214.17  df=5948  p-value=0.000
+## 
+##   mean of age_yrs: 48.106 [47.666, 48.546]</code></pre>
+<pre class="r"><code>weighted_chisqtest(table_data, 
+                   x = edu,
+                   y = chronic_dummy,
+                   weights = pond)</code></pre>
+<pre><code>## 
+## # Measure of Association for Contingency Tables
+##                   (using Fisher&#39;s Exact Test)
+## 
+##    Chi-squared: 46.7523
+##     Cramer&#39;s V: 0.0889
+##             df: 4
+##        p-value: &lt; .001***
+##   Observations: 5920</code></pre>
+</div>
 
 
 
