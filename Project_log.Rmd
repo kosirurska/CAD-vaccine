@@ -1,0 +1,24 @@
+---
+title: "Project log"
+author: "Prepared by UK"
+date: "First opened: 2021-11-17 | Last update: `r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+###  
+**Nov 10 -12, 2021**
+
+Project conceptualization: Upon my work for the infographics for the website, I decided to explore the vaccine uptake and motivations about vaccination in Canadian adults with physical chronic health conditions - those most at risk during the pandemic. I decide to focus on the data collected in the last 2 survey waves (June and September) as that's when vaccine was already widely available in Canada, with 75% of the population fully vaccinated against COVID-19 ([Oxford Data](https://ourworldindata.org/covid-vaccinations)).
+
+**Monday, November 15, 2021**
+
+Draft of the research letter sent to the colleagues: JS, KJD, TBP, and the PIs of the study: SB and KL. Feedback on the overall idea and vaccine framing requested.
+
+**Wednesday, November 17, 2021**
+
+Project stalls due to internal processes. Initial feedback from KJD, TBP is positive.
+
