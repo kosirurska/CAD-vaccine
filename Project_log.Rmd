@@ -22,3 +22,12 @@ Draft of the research letter sent to the colleagues: JS, KJD, TBP, and the PIs o
 
 Project stalls due to internal processes. Initial feedback from KJD, TBP is positive.
 
+**Monday, November 22, 2021**
+
+Received feedback from KL, revised the manuscript, added relevant reference and sent back to review to the primary team.
+The main 3 remaining questions are: 
+
+* How to cut the word count to have it under 600 words?
+* Should be assess the associations with the vaccine using Logistic regression and report ORs, or just simplify with bivariate associations?
+* Currently, the grouping of province is collating BC, Alberta, Manitoba and Saskachewan - perhaps this should be separated, given that we know there exist differences.
+
