@@ -31,3 +31,9 @@ The main 3 remaining questions are:
 * Should be assess the associations with the vaccine using Logistic regression and report ORs, or just simplify with bivariate associations?
 * Currently, the grouping of province is collating BC, Alberta, Manitoba and Saskachewan - perhaps this should be separated, given that we know there exist differences.
 
+**Tuesday, November 30, 2021**
+
+Reworked the main text of the manuscript and added a sub-table to divide individuals with chronic health conditions based on their vaccination status.
+We decided to simplify the analyses and removed logistic regression. Instead we only used the table and include the bivariate comparisons between the sample with chronic health conditions
+Additionally, I reworked the main figure in order to include % rather than N on x axis.
+The 3rd draft sent out for revision.

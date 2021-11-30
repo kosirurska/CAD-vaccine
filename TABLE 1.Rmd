@@ -17,8 +17,10 @@ library(sjmisc)
 library(sjlabelled)
 library(table1)
 library(sjstats)
+library(tableone)
 ```
 
+TABLE 1: Entire sample divided by 
 ```{r data, echo=FALSE, message=FALSE, warning=FALSE}
 # Read in the clean csv file
 
@@ -26,7 +28,7 @@ library(sjstats)
 leger <- read_csv("data/leger_for_analyses.csv")
 
 table_data <- leger %>%
-  select(age_yrs, sex, edu, hoinc, province_full, chronic_descriptive, chronic_dummy, chronic_multi, any_m_health, vaccine, booster_dummy, pond) %>%
+  select(age_yrs, sex, edu, hoinc, province_full, chronic_descriptive, chronic_dummy, chronic_multi, any_m_health, vaccine, vaccine_dummy, booster, booster_dummy, pond) %>%
   mutate(chronic_dummy = factor(chronic_dummy,
                                 levels = c(0:1),
                                 labels = c("Healthy", "Chronic Health Condition")),
@@ -46,33 +48,60 @@ label(table_data$chronic_descriptive) <- "Chronic illness"
 label(table_data$chronic_multi) <- "Multimorbidity"
 label(table_data$any_m_health) <- "Diagnosis of mental health disorder"
 label(table_data$vaccine) <- "Received COVID-19 vaccine?"
-label(table_data$booster_dummy) <- "Likelihood of taking COVID-19 booster dose?"
+label(table_data$booster) <- "Likelihood of taking COVID-19 booster dose?"
 
 units(table_data$age_yrs) <- "years"
 
-table1(~ age_yrs + sex + edu + hoinc + province_full + chronic_descriptive + chronic_multi + any_m_health + vaccine + booster_dummy | chronic_dummy,
+table1(~ age_yrs + sex + edu + hoinc + province_full + chronic_descriptive + chronic_multi + any_m_health + vaccine + booster | chronic_dummy,
        data = table_data)
 ```
 
-### Calculations for the comparison of the groups using survey weights
-```{r}
-weighted_ttest(table_data, 
-               x = age_yrs,
-               grp = chronic_dummy,
-               weights = pond,
-               mu = 0,
-               paired = FALSE,
-               ci.lvl = 0.95,
-               alternative = c("two.sided"))
-
-weighted_chisqtest(table_data, 
-                   x = edu,
-                   y = chronic_dummy,
-                   weights = pond)
+<!-- ### Calculations for the comparison of the groups using survey weights -->
+ ```{r echo = FALSE}
+# weighted_ttest(table_data, 
+#                x = age_yrs,
+#                grp = chronic_dummy,
+#                weights = pond,
+#                mu = 0,
+#                paired = FALSE,
+#                ci.lvl = 0.95,
+#                alternative = c("two.sided"))
+# 
+# weighted_chisqtest(table_data, 
+#                    x = edu,
+#                    y = chronic_dummy,
+#                    weights = pond)
 
 ```
 
 
+## TABLE COMPARING CHRONIC VAXED AND UNVAXED
+
+This table would be included to the one above to provide the bivariate comparison
+```{r echo = FALSE}
+## Create a table
+# First create a variable list you want in the table
+table_data_2 <- table_data %>%
+  filter(chronic_dummy == "Chronic Health Condition")
+
+var_list <- c("age_yrs", "sex", "edu", "province_full", "chronic_descriptive", 
+              "chronic_multi", "any_m_health", "hoinc")
+
+# Determine which variables are categorical
+cat_vars <- c("sex", "edu", "province_full", "chronic_descriptive", 
+              "chronic_multi", "any_m_health", "hoinc")
+
+#All cases table
+table_2 <- CreateTableOne(vars = var_list, factorVars = cat_vars,
+                          data = table_data_2,
+                          strata = c("vaccine_dummy"))
+
+table_2
+
+table_data_2 %>%
+  group_by(any_m_health, vaccine_dummy) %>%
+  count()
+```
 
 
 

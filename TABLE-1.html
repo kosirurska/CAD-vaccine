@@ -169,6 +169,7 @@ pre code {
 </div>
 
 
+<p>TABLE 1: Entire sample divided by</p>
 <div class="Rtable1"><table class="Rtable1">
 <thead>
 <tr>
@@ -504,16 +505,28 @@ pre code {
 <td class="firstrow"></td>
 </tr>
 <tr>
-<td class="rowlabel">Likely</td>
-<td>1241 (35.9%)</td>
-<td>1018 (39.9%)</td>
-<td>2259 (37.6%)</td>
+<td class="rowlabel">Extremely likely</td>
+<td>904 (26.2%)</td>
+<td>822 (32.2%)</td>
+<td>1726 (28.7%)</td>
 </tr>
 <tr>
-<td class="rowlabel">Unlikely</td>
-<td>142 (4.1%)</td>
-<td>54 (2.1%)</td>
-<td>196 (3.3%)</td>
+<td class="rowlabel">Extremely unlikely</td>
+<td>66 (1.9%)</td>
+<td>19 (0.7%)</td>
+<td>85 (1.4%)</td>
+</tr>
+<tr>
+<td class="rowlabel">Somewhat likely</td>
+<td>337 (9.8%)</td>
+<td>196 (7.7%)</td>
+<td>533 (8.9%)</td>
+</tr>
+<tr>
+<td class="rowlabel">Somewhat unlikely</td>
+<td>76 (2.2%)</td>
+<td>35 (1.4%)</td>
+<td>111 (1.8%)</td>
 </tr>
 <tr>
 <td class="rowlabel lastrow">Missing</td>
@@ -524,34 +537,46 @@ pre code {
 </tbody>
 </table>
 </div>
-<div id="calculations-for-the-comparison-of-the-groups-using-survey-weights" class="section level3">
-<h3>Calculations for the comparison of the groups using survey weights</h3>
-<pre class="r"><code>weighted_ttest(table_data, 
-               x = age_yrs,
-               grp = chronic_dummy,
-               weights = pond,
-               mu = 0,
-               paired = FALSE,
-               ci.lvl = 0.95,
-               alternative = c(&quot;two.sided&quot;))</code></pre>
-<pre><code>## 
-## One Sample t-test (two.sided)
-## # t=214.17  df=5948  p-value=0.000
-## 
-##   mean of age_yrs: 48.106 [47.666, 48.546]</code></pre>
-<pre class="r"><code>weighted_chisqtest(table_data, 
-                   x = edu,
-                   y = chronic_dummy,
-                   weights = pond)</code></pre>
-<pre><code>## 
-## # Measure of Association for Contingency Tables
-##                   (using Fisher&#39;s Exact Test)
-## 
-##    Chi-squared: 46.7523
-##     Cramer&#39;s V: 0.0889
-##             df: 4
-##        p-value: &lt; .001***
-##   Observations: 5920</code></pre>
+<!-- ### Calculations for the comparison of the groups using survey weights -->
+<div id="table-comparing-chronic-vaxed-and-unvaxed" class="section level2">
+<h2>TABLE COMPARING CHRONIC VAXED AND UNVAXED</h2>
+<p>This table would be included to the one above to provide the bivariate comparison</p>
+<pre><code>##                          Stratified by vaccine_dummy
+##                           0             1             p      test
+##   n                         251          2294                    
+##   age_yrs (mean (SD))     49.22 (13.98) 55.30 (15.48) &lt;0.001     
+##   sex (%)                                             &lt;0.001     
+##      Female                 155 (61.8)   1105 (48.3)             
+##      Male                    96 (38.2)   1180 (51.6)             
+##      Other                    0 ( 0.0)      4 ( 0.2)             
+##   edu (%)                                              0.003     
+##      College                103 (41.2)   1108 (48.6)             
+##      Graduate                28 (11.2)    367 (16.1)             
+##      Never been               0 ( 0.0)      1 ( 0.0)             
+##      Primary                  4 ( 1.6)     22 ( 1.0)             
+##      Secondary              115 (46.0)    782 (34.3)             
+##   province_full (%)                                    0.096     
+##      Alberta                 37 (14.7)    277 (12.1)             
+##      British Columbia        31 (12.4)    277 (12.1)             
+##      Manitoba                14 ( 5.6)     86 ( 3.7)             
+##      New Brunswick            6 ( 2.4)     62 ( 2.7)             
+##      Newfoundland             8 ( 3.2)     32 ( 1.4)             
+##      Nova Scotia              9 ( 3.6)     76 ( 3.3)             
+##      Ontario                 98 (39.0)    889 (38.8)             
+##      Prince Edward Island     0 ( 0.0)      8 ( 0.3)             
+##      Quebec                  38 (15.1)    514 (22.4)             
+##      Saskatchewan            10 ( 4.0)     73 ( 3.2)             
+##   chronic_descriptive (%)                              0.005     
+##      Autoimmune              34 (13.5)    176 ( 7.7)             
+##      Cancer                   3 ( 1.2)     74 ( 3.2)             
+##      Diabetes                16 ( 6.4)    144 ( 6.3)             
+##      Heart disease           37 (14.7)    449 (19.6)             
+##      Hypertension            75 (29.9)    799 (34.8)             
+##      Lung disease            65 (25.9)    517 (22.5)             
+##      Obesity                 16 ( 6.4)    105 ( 4.6)             
+##      Other                    5 ( 2.0)     30 ( 1.3)             
+##   chronic_multi = Yes (%)    99 (39.4)   1081 (47.1)   0.024     
+##   any_m_health = Yes (%)    108 (43.0)    725 (31.6)  &lt;0.001</code></pre>
 </div>
 
 
