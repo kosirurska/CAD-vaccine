@@ -37,3 +37,8 @@ Reworked the main text of the manuscript and added a sub-table to divide individ
 We decided to simplify the analyses and removed logistic regression. Instead we only used the table and include the bivariate comparisons between the sample with chronic health conditions
 Additionally, I reworked the main figure in order to include % rather than N on x axis.
 The 3rd draft sent out for revision.
+
+**Monday, December 6, 2021**
+
+Looking at feedback from SLB, need will incorporate a few comments and start formatting for journal.
+
