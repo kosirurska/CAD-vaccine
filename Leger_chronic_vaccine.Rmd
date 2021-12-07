@@ -110,141 +110,143 @@ leger %>%
 ### Vaccine motivations among Canadian with physical chronic health conditions
 
 ```{r echo=FALSE, warning=FALSE, fig.width=12, fig.height=14}
-vaxed <- leger_chronic %>%
-  filter(vaccine_dummy == 1) %>%
-  mutate_at(vars(c(inf1:inf16)), 
-            funs(case_when(. == 1 ~ 1,
-                           . == 2 | . == 3 | . == 4 ~ 0))) %>%
-  pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
-  group_by(influence, value) %>%
-  count(influence) %>%
-  drop_na() %>%
-  ungroup(influence, value) %>%
-  filter(value == 1) %>%
-  select(-value) %>%
-  mutate(influence = as.factor(influence),
-         influence = fct_reorder(influence, n)) %>%
-  ggplot(aes(x = n, y = influence, fill = influence)) + 
-  geom_col() + 
-  geom_text(aes(label = paste0(round((n/2294*100),1),"%"), x = n - 70)) +
-  labs(title = "Motivations among vaccinated individuals (N = 2,294)", 
-       x = "Number of people responding 'To a great extent'",
-       y = " ") + 
-  theme_classic(base_size = 16) +
-  theme(legend.position = "none",
-        strip.text = element_text(face = 'bold'),
-        panel.grid.major.x = element_line()) +
-  scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
-                              "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
-                   labels = c("Trust in vaccine company",
-                              "Info of no side effects",
-                              "Info about effectiveness",
-                              "Personal high risk",
-                              "Other's positive att.",
-                              "Others getting vaccine",
-                              "Doctor recommendation",
-                              "Convenience of getting vaccine",
-                              "Protect others",
-                              "Attending events",
-                              "Doing my part",
-                              "Employer recommendation",
-                              "Only need 1 dose",
-                              "Reduce my worries",
-                              "Effective for variants",
-                              "Vaccine of choice")) +
-  scale_fill_viridis_d(alpha = 0.9,
-                       begin = 0.3, end = 1)
-
-
-unvaxed <- leger_chronic %>%
-  filter(vaccine_dummy == 0) %>%
-  mutate_at(vars(c(inf1:inf16)), 
-            funs(case_when(. == 1 ~ 1,
-                           . == 2 | . == 3 | . == 4 ~ 0))) %>%
-  pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
-  group_by(influence, value) %>%
-  count(influence) %>%
-  drop_na() %>%
-  ungroup(influence, value) %>%
-  filter(value == 1) %>%
-  select(-value) %>%
-  mutate(influence = as.factor(influence),
-         influence = fct_reorder(influence, n)) %>%
-  ggplot(aes(x = n, y = influence, fill = influence)) + 
-  geom_col() + 
-  geom_text(aes(label = paste0(round((n/251*100),1),"%"), x = n - 5)) +
-  labs(title = "Motivations among unvaccinated individuals (N = 251)", 
-       x = "Number of people responding 'To a great extent'",
-       y = " ") + 
-  theme_classic(base_size = 16) +
-  theme(legend.position = "none",
-        strip.text = element_text(face = 'bold'),
-        panel.grid.major.x = element_line()) +
-  scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
-                              "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
-                   labels = c("Trust in vaccine company",
-                              "Info of no side effects",
-                              "Info about effectiveness",
-                              "Personal high risk",
-                              "Other's positive att.",
-                              "Others getting vaccine",
-                              "Doctor recommendation",
-                              "Convenience of getting vaccine",
-                              "Protect others",
-                              "Attending events",
-                              "Doing my part",
-                              "Employer recommendation",
-                              "Only need 1 dose",
-                              "Reduce my worries",
-                              "Effective for variants",
-                              "Vaccine of choice")) +
-  scale_fill_viridis_d(alpha = 0.9,
-                       begin = 0.3, end = 1)
-
-(vaxed/unvaxed) + plot_annotation(tag_levels = 'A')
+# vaxed <- leger_chronic %>%
+#   filter(vaccine_dummy == 1) %>%
+#   mutate_at(vars(c(inf1:inf16)), 
+#             funs(case_when(. == 1 ~ 1,
+#                            . == 2 | . == 3 | . == 4 ~ 0))) %>%
+#   pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
+#   group_by(influence, value) %>%
+#   count(influence) %>%
+#   drop_na() %>%
+#   ungroup(influence, value) %>%
+#   filter(value == 1) %>%
+#   select(-value) %>%
+#   mutate(influence = as.factor(influence),
+#          influence = fct_reorder(influence, n)) %>%
+#   ggplot(aes(x = n, y = influence, fill = influence)) + 
+#   geom_col() + 
+#   geom_text(aes(label = paste0(round((n/2294*100),1),"%"), x = n - 70)) +
+#   labs(title = "Motivations among vaccinated individuals (N = 2,294)", 
+#        x = "Number of people responding 'To a great extent'",
+#        y = " ") + 
+#   theme_classic(base_size = 16) +
+#   theme(legend.position = "none",
+#         strip.text = element_text(face = 'bold'),
+#         panel.grid.major.x = element_line()) +
+#   scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
+#                               "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
+#                    labels = c("Trust in vaccine company",
+#                               "Info of no side effects",
+#                               "Info about effectiveness",
+#                               "Personal high risk",
+#                               "Other's positive att.",
+#                               "Others getting vaccine",
+#                               "Doctor recommendation",
+#                               "Convenience of getting vaccine",
+#                               "Protect others",
+#                               "Attending events",
+#                               "Doing my part",
+#                               "Employer recommendation",
+#                               "Only need 1 dose",
+#                               "Reduce my worries",
+#                               "Effective for variants",
+#                               "Vaccine of choice")) +
+#   scale_fill_viridis_d(alpha = 0.9,
+#                        begin = 0.3, end = 1)
+# 
+# 
+# unvaxed <- leger_chronic %>%
+#   filter(vaccine_dummy == 0) %>%
+#   mutate_at(vars(c(inf1:inf16)), 
+#             funs(case_when(. == 1 ~ 1,
+#                            . == 2 | . == 3 | . == 4 ~ 0))) %>%
+#   pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
+#   group_by(influence, value) %>%
+#   count(influence) %>%
+#   drop_na() %>%
+#   ungroup(influence, value) %>%
+#   filter(value == 1) %>%
+#   select(-value) %>%
+#   mutate(influence = as.factor(influence),
+#          influence = fct_reorder(influence, n)) %>%
+#   ggplot(aes(x = n, y = influence, fill = influence)) + 
+#   geom_col() + 
+#   geom_text(aes(label = paste0(round((n/251*100),1),"%"), x = n - 5)) +
+#   labs(title = "Motivations among unvaccinated individuals (N = 251)", 
+#        x = "Number of people responding 'To a great extent'",
+#        y = " ") + 
+#   theme_classic(base_size = 16) +
+#   theme(legend.position = "none",
+#         strip.text = element_text(face = 'bold'),
+#         panel.grid.major.x = element_line()) +
+#   scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
+#                               "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
+#                    labels = c("Trust in vaccine company",
+#                               "Info of no side effects",
+#                               "Info about effectiveness",
+#                               "Personal high risk",
+#                               "Other's positive att.",
+#                               "Others getting vaccine",
+#                               "Doctor recommendation",
+#                               "Convenience of getting vaccine",
+#                               "Protect others",
+#                               "Attending events",
+#                               "Doing my part",
+#                               "Employer recommendation",
+#                               "Only need 1 dose",
+#                               "Reduce my worries",
+#                               "Effective for variants",
+#                               "Vaccine of choice")) +
+#   scale_fill_viridis_d(alpha = 0.9,
+#                        begin = 0.3, end = 1)
+# 
+# (vaxed/unvaxed) + plot_annotation(tag_levels = 'A')
 ```
 
-### Logistic regression output
+<!-- ### Logistic regression output -->
 
-*NOTE* - Education is treated as continuous variable with the following levels: "never been" ~ 0, "primary" ~ 1,"secondary" ~ 2, "college" ~ 3, "graduate" ~ 4.
+<!-- *NOTE* - Education is treated as continuous variable with the following levels: "never been" ~ 0, "primary" ~ 1,"secondary" ~ 2, "college" ~ 3, "graduate" ~ 4. -->
 
-Province is broken down into 3 geographical regions: 
+<!-- Province is broken down into 3 geographical regions:  -->
 
-* *East* = "New Brunswick", "Nova Scotia", "Prince Edward Island", "Newfoundland"
-* *Central* = "Ontario", "Quebec"
-* *West* = "British Columbia", "Alberta", "Saskatchewan", "Manitoba"
+<!-- * *East* = "New Brunswick", "Nova Scotia", "Prince Edward Island", "Newfoundland" -->
+<!-- * *Central* = "Ontario", "Quebec" -->
+<!-- * *West* = "British Columbia", "Alberta", "Saskatchewan", "Manitoba" -->
 
-Distress rev = compound score of COVID-19 related feelings of anxiety, depression, and loneliness. Scale rangess from 0 - 9, with higher scores indicating higher levels of pandemic-related distress.
+<!-- Distress rev = compound score of COVID-19 related feelings of anxiety, depression, and loneliness. Scale rangess from 0 - 9, with higher scores indicating higher levels of pandemic-related distress. -->
 
 ```{r echo=FALSE, warning=FALSE}
-set.seed(1)
-
-logit_model_data <- leger_chronic %>%
-  select(vaccine_dummy, age_yrs, sex, hoinc, edu, province, wave, any_m_health, chronic_multi, distress_rev, pond) %>%
-  filter(sex %in% c("Male", "Female")) %>%
-  mutate(education = as.numeric(case_when(edu == "Never been" ~ 0, 
-                                          edu == "Primary" ~ 1,
-                                          edu == "Secondary" ~ 2,
-                                          edu == "College" ~ 3,
-                                          edu == "Graduate" ~ 4)))
-
-
-# In case income should be treated as numeric
-# income = as.numeric(case_when(hoinc == "bottom 3rd" ~ 0,
-#                                        hoinc == "middle 3rd" ~ 1,
-#                                        hoinc == "top 3rd" ~ 2)),
-
-logit_c1 <- glm(vaccine_dummy ~ age_yrs + sex + province + education + hoinc + any_m_health + chronic_multi + distress_rev,
-                family = "binomial",
-                data = logit_model_data,
-                weights = pond)
-
-tab_model(logit_c1)
+# set.seed(1)
+# 
+# logit_model_data <- leger_chronic %>%
+#   select(vaccine_dummy, age_yrs, sex, hoinc, edu, province, wave, any_m_health, chronic_multi, distress_rev, pond) %>%
+#   filter(sex %in% c("Male", "Female")) %>%
+#   mutate(education = as.numeric(case_when(edu == "Never been" ~ 0, 
+#                                           edu == "Primary" ~ 1,
+#                                           edu == "Secondary" ~ 2,
+#                                           edu == "College" ~ 3,
+#                                           edu == "Graduate" ~ 4)))
+# 
+# 
+# # In case income should be treated as numeric
+# # income = as.numeric(case_when(hoinc == "bottom 3rd" ~ 0,
+# #                                        hoinc == "middle 3rd" ~ 1,
+# #                                        hoinc == "top 3rd" ~ 2)),
+# 
+# logit_c1 <- glm(vaccine_dummy ~ age_yrs + sex + province + education + hoinc + any_m_health + chronic_multi + distress_rev,
+#                 family = "binomial",
+#                 data = logit_model_data,
+#                 weights = pond)
+# 
+# tab_model(logit_c1)
 
 ```
 
 #### Swap the axis so that is shows %
 ```{r echo=FALSE, warning=FALSE, fig.width=12, fig.height=14}
+## No     Yes (fully) Yes (partially) 
+## 251            1343             951 
 vaxed_2 <- leger_chronic %>%
   filter(vaccine_dummy == 1) %>%
   mutate_at(vars(c(inf1:inf16)), 
@@ -342,11 +344,164 @@ unvaxed_2 <- leger_chronic %>%
   scale_fill_viridis_d(alpha = 0.9,
                        begin = 0.3, end = 1)
 
-(vaxed_2/unvaxed_2) + plot_annotation(tag_levels = 'A')
+#(vaxed_2/unvaxed_2) + plot_annotation(tag_levels = 'A')
 ```
+
+
+```{r echo=FALSE, warning=FALSE, fig.width=12, fig.height=18}
+
+vaxed_fully <- leger_chronic %>%
+  filter(vaccine == "Yes (fully)") %>%
+  mutate_at(vars(c(inf1:inf16)), 
+            funs(case_when(. == 1 ~ 1,
+                           . == 2 | . == 3 | . == 4 ~ 0))) %>%
+  pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
+  group_by(influence, value) %>%
+  count(influence) %>%
+  drop_na() %>%
+  ungroup(influence, value) %>%
+  filter(value == 1) %>%
+  select(-value) %>%
+  mutate(prop = n/1343*100) %>%
+  mutate(prop = round(prop, 1)) %>%
+  mutate(influence = as.factor(influence),
+         influence = fct_reorder(influence, prop)) %>%
+  ggplot(aes(x = prop, y = influence, fill = influence)) + 
+  geom_col() + 
+  geom_text(aes(label = paste0(prop,"%"), x = prop-3)) +
+  labs(title = "Motivations among vaccinated individuals (N = 1,343)", 
+       x = "Proportion of people responding 'To a great extent'",
+       y = " ") + 
+  xlim(0, 100) +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none",
+        strip.text = element_text(face = 'bold'),
+        panel.grid.major.x = element_line()) +
+  scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
+                              "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
+                   labels = c("Trust in vaccine company",
+                              "Info of no side effects",
+                              "Info about effectiveness",
+                              "Personal high risk",
+                              "Other's positive att.",
+                              "Others getting vaccine",
+                              "Doctor recommendation",
+                              "Convenience of getting vaccine",
+                              "Protect others",
+                              "Attending events",
+                              "Doing my part",
+                              "Employer recommendation",
+                              "Only need 1 dose",
+                              "Reduce my worries",
+                              "Effective for variants",
+                              "Vaccine of choice")) +
+  scale_fill_viridis_d(alpha = 0.9,
+                       begin = 0.3, end = 1)
+
+
+unvaxed_3 <- leger_chronic %>%
+  filter(vaccine == "No") %>%
+  mutate_at(vars(c(inf1:inf16)), 
+            funs(case_when(. == 1 ~ 1,
+                           . == 2 | . == 3 | . == 4 ~ 0))) %>%
+  pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
+  group_by(influence, value) %>%
+  count(influence) %>%
+  drop_na() %>%
+  ungroup(influence, value) %>%
+  filter(value == 1) %>%
+  select(-value)%>%
+  mutate(prop = n/251*100) %>%
+  mutate(prop = round(prop, 1)) %>%
+  mutate(influence = as.factor(influence),
+         influence = fct_reorder(influence, prop)) %>%
+  ggplot(aes(x = prop, y = influence, fill = influence)) + 
+  geom_col() + 
+  geom_text(aes(label = paste0(prop,"%"), x = prop-3)) +
+  labs(title = "Motivations among unvaccinated individuals (N = 251)", 
+       x = "Proportion of people responding 'To a great extent'",
+       y = " ") + 
+  xlim(0, 100) +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none",
+        strip.text = element_text(face = 'bold'),
+        panel.grid.major.x = element_line()) +
+  scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
+                              "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
+                   labels = c("Trust in vaccine company",
+                              "Info of no side effects",
+                              "Info about effectiveness",
+                              "Personal high risk",
+                              "Other's positive att.",
+                              "Others getting vaccine",
+                              "Doctor recommendation",
+                              "Convenience of getting vaccine",
+                              "Protect others",
+                              "Attending events",
+                              "Doing my part",
+                              "Employer recommendation",
+                              "Only need 1 dose",
+                              "Reduce my worries",
+                              "Effective for variants",
+                              "Vaccine of choice")) +
+  scale_fill_viridis_d(alpha = 0.9,
+                       begin = 0.3, end = 1)
+
+vaxed_partially <- leger_chronic %>%
+  filter(vaccine == "Yes (partially)") %>%
+  mutate_at(vars(c(inf1:inf16)), 
+            funs(case_when(. == 1 ~ 1,
+                           . == 2 | . == 3 | . == 4 ~ 0))) %>%
+  pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
+  group_by(influence, value) %>%
+  count(influence) %>%
+  drop_na() %>%
+  ungroup(influence, value) %>%
+  filter(value == 1) %>%
+  select(-value)%>%
+  mutate(prop = n/951*100) %>%
+  mutate(prop = round(prop, 1)) %>%
+  mutate(influence = as.factor(influence),
+         influence = fct_reorder(influence, prop)) %>%
+  ggplot(aes(x = prop, y = influence, fill = influence)) + 
+  geom_col() + 
+  geom_text(aes(label = paste0(prop,"%"), x = prop-3)) +
+  labs(title = "Motivations among partially vaccinated individuals (N = 951)*", 
+       x = "Proportion of people responding 'To a great extent'",
+       y = " ") + 
+  xlim(0, 100) +
+  theme_classic(base_size = 16) +
+  theme(legend.position = "none",
+        strip.text = element_text(face = 'bold'),
+        panel.grid.major.x = element_line()) +
+  scale_y_discrete(breaks = c("inf1", "inf2", "inf3", "inf4", "inf5", "inf6", "inf7", "inf10",
+                              "inf11", "inf12", "inf13", "inf14", "inf15", "inf16", "inf17", "inf18"),
+                   labels = c("Trust in vaccine company",
+                              "Info of no side effects",
+                              "Info about effectiveness",
+                              "Personal high risk",
+                              "Other's positive att.",
+                              "Others getting vaccine",
+                              "Doctor recommendation",
+                              "Convenience of getting vaccine",
+                              "Protect others",
+                              "Attending events",
+                              "Doing my part",
+                              "Employer recommendation",
+                              "Only need 1 dose",
+                              "Reduce my worries",
+                              "Effective for variants",
+                              "Vaccine of choice")) +
+  scale_fill_viridis_d(alpha = 0.9,
+                       begin = 0.3, end = 1)
+
+(vaxed_fully/vaxed_partially/unvaxed_3) + plot_annotation(tag_levels = 'A')
+```
+
 
 
 ## DISCUSSION
 
 These insights provide important information on how healthcare professionals, policymakers as well as all the relevant stakeholders may need to structure their vaccine messaging in order to encourage the vaccine uptake among the most vulnerable and at risk populations.
+
 
