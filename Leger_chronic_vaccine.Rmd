@@ -105,6 +105,17 @@ leger %>%
   select(-sum_group_status) %>%
   kable(col.names = c("Chronic illness", "Vaccine status", "N", "Proportion")) %>%
   kable_styling(full_width = FALSE)
+
+leger %>%
+  select(chronic_dummy, vaccine, booster) %>%
+  group_by(chronic_dummy, vaccine, booster) %>%
+  drop_na() %>%
+  count() %>%
+  group_by(chronic_dummy, vaccine) %>%
+  mutate(sum_group_status = sum(n),
+         prop = n / sum_group_status * 100,
+         prop = round(prop, 1)) %>%
+  select(-sum_group_status)
 ```
 
 ### Vaccine motivations among Canadian with physical chronic health conditions
