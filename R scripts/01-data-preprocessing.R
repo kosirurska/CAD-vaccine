@@ -25,7 +25,7 @@ leger_for_analysis <- leger_raw %>%
          hecond_sq001:hecond_sq011, # self-reported chronic conditions
          phyhe, menthe, wave, pond,
          cvdvacci, cvdvacc_v2, contrpos, vacboos, #vaccination questions
-         contains("inflvac"), contains("inflvade")) %>%
+         contains("inflvac"), contains("inflvade"), contains("infvasec")) %>%
   mutate_at(vars(hecond_sq001, hecond_sq002, hecond_sq003, hecond_sq004,
                  hecond_sq005, hecond_sq006, hecond_sq007, hecond_sq008, 
                  hecond_sq009, hecond_sq010, hecond_sq011), ~ifelse(. == 2, 0, .)) %>% # recode into dummy with 1 and 0 for chronic conditions, easier for counting
@@ -77,21 +77,21 @@ leger_for_analysis <- leger_raw %>%
                                      "Pref. not to answer")),
          vaccine_dummy = case_when(cvdvacci == 1 ~ 0, # create a vaccine dummy yes or no for binary log.
                                    cvdvacci != 1 ~ 1),
-         inf1 = coalesce(inflvac_sq001, inflvade_sq001), #coalesce the vaccine motivations
-         inf2 = coalesce(inflvac_sq002, inflvade_sq002),
-         inf3 = coalesce(inflvac_sq003, inflvade_sq003),
-         inf4 = coalesce(inflvac_sq004, inflvade_sq004),
-         inf5 = coalesce(inflvac_sq005, inflvade_sq005),
-         inf6 = coalesce(inflvac_sq006, inflvade_sq006),
-         inf7 = coalesce(inflvac_sq007, inflvade_sq007),
-         inf10 = coalesce(inflvac_sq010, inflvade_sq010),
-         inf11 = coalesce(inflvac_sq011, inflvade_sq011),
-         inf12 = coalesce(inflvac_sq012, inflvade_sq012),
-         inf13 = coalesce(inflvac_sq013, inflvade_sq013),
-         inf14 = coalesce(inflvac_sq014, inflvade_sq014),
+         inf1 = coalesce(inflvac_sq001, inflvade_sq001, infvasec_sq001), #coalesce the vaccine motivations
+         inf2 = coalesce(inflvac_sq002, inflvade_sq002, infvasec_sq002),
+         inf3 = coalesce(inflvac_sq003, inflvade_sq003, infvasec_sq003),
+         inf4 = coalesce(inflvac_sq004, inflvade_sq004, infvasec_sq004),
+         inf5 = coalesce(inflvac_sq005, inflvade_sq005, infvasec_sq005),
+         inf6 = coalesce(inflvac_sq006, inflvade_sq006, infvasec_sq006),
+         inf7 = coalesce(inflvac_sq007, inflvade_sq007, infvasec_sq007),
+         inf10 = coalesce(inflvac_sq010, inflvade_sq010, infvasec_sq010),
+         inf11 = coalesce(inflvac_sq011, inflvade_sq011, infvasec_sq011),
+         inf12 = coalesce(inflvac_sq012, inflvade_sq012, infvasec_sq012),
+         inf13 = coalesce(inflvac_sq013, inflvade_sq013, infvasec_sq013),
+         inf14 = coalesce(inflvac_sq014, inflvade_sq014, infvasec_sq014),
          inf15 = coalesce(inflvac_sq015, inflvade_sq015),
-         inf16 = coalesce(inflvac_sq016, inflvade_sq016),
-         inf17 = coalesce(inflvac_sq017, inflvade_sq017),
+         inf16 = coalesce(inflvac_sq016, inflvade_sq016, infvasec_sq016),
+         inf17 = coalesce(inflvac_sq017, inflvade_sq017, infvasec_sq017),
          inf18 = coalesce(inflvac_sq018, inflvade_sq018),
          booster = factor(vacboos, 
                           levels = c(1:5), #vaccine booster question
