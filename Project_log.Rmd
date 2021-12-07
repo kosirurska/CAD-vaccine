@@ -42,3 +42,7 @@ The 3rd draft sent out for revision.
 
 Looking at feedback from SLB, need will incorporate a few comments and start formatting for journal.
 
+**Tuesday, December 7, 2021**
+
+Incorporated final feedback and made text more concise. Added a further break down to the figure - fully vaccinated, partially vaccinated, non-vaccinated.
+Manually fixed the table and proportions in it. Summarized the changes and added funding, COI statement and sent back to co-authors, waiting for feedback by Friday for submission.
