@@ -24,6 +24,9 @@ library(sjmisc)
 library(sjlabelled)
 ```
 
+This file contains some older code as well, for future reference. The project log contains the timeline.
+The clean figure file is available separately, these were the preceeding scripts.
+
 ```{r data, echo=FALSE, message=FALSE, warning=FALSE}
 # Read in the clean csv file
 leger <- read_csv("data/leger_for_analyses.csv")
@@ -56,13 +59,13 @@ More complete table is available in the separate file on the same repository.
 ```{r echo=FALSE, warning=FALSE}
 ## Create a table
 table_data <- leger %>%
-  select(age_yrs, sex, edu, hoinc, ethnicity, province_full, chronic_descriptive, chronic_dummy, chronic_multi, any_m_health)
+  select(age_yrs, sex, edu, hoinc, ethnicity, province_full, chronic_descriptive, chronic_dummy, chronic_multi, any_m_health, vaccine)
 
 # First create a variable list you want in the table
-var_list <- c("age_yrs", "sex", "edu", "hoinc", "province_full", "chronic_descriptive", "chronic_multi")
+var_list <- c("age_yrs", "sex", "edu", "hoinc", "province_full", "chronic_descriptive", "chronic_multi", "vaccine")
 
 # Determine which variables are categorical
-cat_vars <- c("sex", "edu", "hoinc", "province_full", "chronic_descriptive", "chronic_multi")
+cat_vars <- c("sex", "edu", "hoinc", "province_full", "chronic_descriptive", "chronic_multi", "vaccine")
 
 #All cases table
 table_1 <- CreateTableOne(vars = var_list,
@@ -508,11 +511,5 @@ vaxed_partially <- leger_chronic %>%
 
 (vaxed_fully/vaxed_partially/unvaxed_3) + plot_annotation(tag_levels = 'A')
 ```
-
-
-
-## DISCUSSION
-
-These insights provide important information on how healthcare professionals, policymakers as well as all the relevant stakeholders may need to structure their vaccine messaging in order to encourage the vaccine uptake among the most vulnerable and at risk populations.
 
 
