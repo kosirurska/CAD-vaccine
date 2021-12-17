@@ -36,8 +36,8 @@ leger_chronic <- leger %>%
 ```{r echo=FALSE, warning=FALSE, fig.width=12, fig.height=18}
 
 vaxed <- leger_chronic %>%
-  filter(vaccine_dummy == 1) %>%
-  mutate_at(vars(c(inf1:inf16)),
+  filter(vaccine == "Yes (fully)" | vaccine == "Yes (partially)") %>%
+  mutate_at(vars(c(inf1:inf16)), 
             funs(case_when(. == 1 ~ 1,
                            . == 2 | . == 3 | . == 4 ~ 0))) %>%
   pivot_longer(names_to = "influence", values_to = "value", cols = c(inf1:inf16)) %>%
@@ -47,14 +47,17 @@ vaxed <- leger_chronic %>%
   ungroup(influence, value) %>%
   filter(value == 1) %>%
   select(-value) %>%
+  mutate(prop = n/2294*100) %>%
+  mutate(prop = round(prop, 1)) %>%
   mutate(influence = as.factor(influence),
-         influence = fct_reorder(influence, n)) %>%
-  ggplot(aes(x = n, y = influence, fill = influence)) +
-  geom_col() +
-  geom_text(aes(label = paste0(round((n/2294*100),1),"%"), x = n - 70)) +
-  labs(title = "Motivations among vaccinated individuals (N = 2,294)",
-       x = "Number of people responding 'To a great extent'",
-       y = " ") +
+         influence = fct_reorder(influence, prop)) %>%
+  ggplot(aes(x = prop, y = influence, fill = influence)) + 
+  geom_col() + 
+  geom_text(aes(label = paste0(prop,"%"), x = prop-3)) +
+  labs(title = "Motivations among vaccinated individuals (N = 2294)", 
+       x = "Proportion of people responding 'To a great extent'",
+       y = " ") + 
+  xlim(0, 100) +
   theme_classic(base_size = 16) +
   theme(legend.position = "none",
         strip.text = element_text(face = 'bold'),
@@ -130,4 +133,3 @@ unvaxed_3 <- leger_chronic %>%
 
 (vaxed/unvaxed_3) + plot_annotation(tag_levels = 'A')
 ```
-
