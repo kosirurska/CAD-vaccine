@@ -12,7 +12,7 @@ What does the repository contain:
 
 * *Project_log* is mostly an internal working file that documents the workflow of this project.
 
-* *Supplementary_material* contains a pdf version of the additional chi square test and figure.
+* *Supplementary_material* contains a pdf version of the expanded Figure 1.
 
 * *TABLE 1* file contains the code for the table.
 
